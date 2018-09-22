@@ -30,22 +30,23 @@ void SeekerParser::queryParsing()
         else {
             this->_operatorsPosVect = this->_theTok->multiOperatorMatcher(parenthCont);
             this->_operatorsPriVect = this->_operatorsPosVect;
-            this->sortByProperty(this->_operatorsPriVect, "priority");
+            this->sortByProperty(this->_operatorsPriVect);
             this->parseNakedQuery(parenthCont);
         }
     }
     this->_operatorsPosVect = this->_theTok->multiOperatorMatcher(this->_query);
     this->_operatorsPriVect = this->_operatorsPosVect;
-    this->sortByProperty(this->_operatorsPriVect, "priority");
+    this->sortByProperty(this->_operatorsPriVect);
     this->parseNakedQuery(this->_query);
     this->parserMultiTokenizer(this->_query, this->_theTok->singleOperatorMatcher(this->_query), this->_query);
 }
 
-void SeekerParser::sortByProperty(QVector<QHash<QString, QVariant>> &vect, const QString &property)
+void SeekerParser::sortByProperty(QVector<QRegularExpressionMatch> &vect)
 {
-    std::stable_sort(vect.begin(), vect.end(), [&property](const QHash<QString, QVariant> &a, const QHash<QString, QVariant> &b) {
-        int val_a = a.value(property).toInt();
-        int val_b = b.value(property).toInt();
+    std::stable_sort(vect.begin(), vect.end(), [this](const QRegularExpressionMatch &a, const QRegularExpressionMatch &b) {
+
+        int val_a = static_cast<int>(this->_theTok->checkOperatorPriority(a.captured(0)));
+        int val_b = static_cast<int>(this->_theTok->checkOperatorPriority(b.captured(0)));
         return val_a > val_b;
     });
 }
@@ -53,25 +54,25 @@ void SeekerParser::sortByProperty(QVector<QHash<QString, QVariant>> &vect, const
 void SeekerParser::parseNakedQuery(QString &query)
 {
     while(this->_operatorsPriVect.size() > 1) {
-        QHash<QString, QVariant> currentOp = this->_operatorsPriVect.at(0);
+        QRegularExpressionMatch currentOp = this->_operatorsPriVect.at(0);
         QString subStr, currentOpSign;
         int currentOpPos = 0, currentPos = 0, rightPos = 0, leftPos = 0, dist = 0;
-        qDebug()<<"operator:"<<currentOp.value("operator").toString();
+        qDebug()<<"operator:"<<currentOp.captured(0);
         for(int i = 0; i < this->_operatorsPosVect.size(); ++i) {
-            currentOpPos = currentOp.value("start").toInt();
-            currentOpSign = this->_operatorsPosVect.at(i).value("operator").toString();
-            currentPos = this->_operatorsPosVect.at(i).value("start").toInt();
+            currentOpPos = currentOp.capturedStart(0);
+            currentOpSign = this->_operatorsPosVect.at(i).captured(0);
+            currentPos = this->_operatorsPosVect.at(i).capturedStart(0);
             if(currentOpPos == currentPos) {
                 if(i == 0 && this->_operatorsPosVect.size() > 0) {
                     leftPos = 0;
-                    rightPos = this->_operatorsPosVect.at(i+1).value("start").toInt();
+                    rightPos = this->_operatorsPosVect.at(i+1).capturedStart(0);
                     subStr = query.mid(leftPos, rightPos);
                     qDebug()<<"subStr 0:"<<subStr;
                 }
                 else if(i > 0) {
-                    leftPos = this->_operatorsPosVect.at(i-1).value("start").toInt() + this->_operatorsPosVect.at(i-1).value("length").toInt();
+                    leftPos = this->_operatorsPosVect.at(i-1).capturedStart(0) + this->_operatorsPosVect.at(i-1).capturedLength(0);
                     if(i < this->_operatorsPosVect.size()-1) {
-                        rightPos = this->_operatorsPosVect.at(i+1).value("start").toInt();
+                        rightPos = this->_operatorsPosVect.at(i+1).capturedStart(0);
                         dist = rightPos - leftPos;
                     }
                     else if(i == this->_operatorsPosVect.size()-1) {
@@ -84,7 +85,7 @@ void SeekerParser::parseNakedQuery(QString &query)
                 this->parserMultiTokenizer(subStr, currentOpSign, query);
                 this->_operatorsPosVect = this->_theTok->multiOperatorMatcher(query);
                 this->_operatorsPriVect = this->_operatorsPosVect;
-                this->sortByProperty(this->_operatorsPriVect, "priority");
+                this->sortByProperty(this->_operatorsPriVect);
                 break;
             }
         }

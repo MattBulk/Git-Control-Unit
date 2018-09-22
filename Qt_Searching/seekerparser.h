@@ -31,7 +31,7 @@ private:
      * @param property
      * \note this method uses the stable_sort descending order
      */
-    void sortByProperty(QVector<QHash<QString, QVariant>> &vect, const QString &property);
+    void sortByProperty(QVector<QRegularExpressionMatch> &vect);
     /**
      * @brief parseNakedQuery
      * @param query
@@ -58,9 +58,9 @@ private:
 
     QString _query;
 
-    QVector<QHash<QString, QVariant>> _operatorsPriVect;
+    QVector<QRegularExpressionMatch> _operatorsPriVect;
 
-    QVector<QHash<QString, QVariant>> _operatorsPosVect;
+    QVector<QRegularExpressionMatch> _operatorsPosVect;
 
 
 };

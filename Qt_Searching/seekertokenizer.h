@@ -36,7 +36,7 @@ public:
      * @return QVector
      * \note I will change this method for returning a match better structed, a vector of QRegularExpressionMatch
      */
-    QVector<QHash<QString, QVariant>> multiOperatorMatcher(const QString &baseString);
+    QVector<QRegularExpressionMatch> multiOperatorMatcher(const QString &baseString);
     /**
      * @brief operatorsNumberChecker
      * @param baseString
@@ -72,8 +72,6 @@ public:
      * \deprecated
      */
     const QMap<QString, OperatorPriority> &operatorMap() const;
-
-private:
     /**
      * @brief checkOperatorPriority
      * @param op
@@ -81,6 +79,8 @@ private:
      * \note return the operator priority
      */
     OperatorPriority checkOperatorPriority(const QString &op);
+
+private:
 
     QRegularExpression _pattern;
     /**

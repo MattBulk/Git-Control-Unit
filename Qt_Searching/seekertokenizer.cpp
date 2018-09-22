@@ -33,24 +33,25 @@ QString SeekerTokenizer::singleOperatorMatcher(const QString &parenthesisContent
     else return(matched);
 }
 
-QVector<QHash<QString, QVariant>> SeekerTokenizer::multiOperatorMatcher(const QString &baseString)
+QVector<QRegularExpressionMatch> SeekerTokenizer::multiOperatorMatcher(const QString &baseString)
 {
     QRegularExpressionMatchIterator i = this->_pattern.globalMatch(baseString);
     QRegularExpressionMatch match;
-    QVector<QHash<QString, QVariant>> objVect;
+    QVector<QRegularExpressionMatch> matchVect;
     QString currentOper;
     while (i.hasNext()) {
         match = i.next();
         currentOper = match.captured(0);
-        QHash<QString, QVariant> obj;
+        /*QHash<QString, QVariant> obj;
         obj.insert("operator", currentOper);
         obj.insert("priority", static_cast<int>(this->checkOperatorPriority(currentOper)));
         obj.insert("length", match.capturedLength(0));
         obj.insert("start", match.capturedStart(0));
         obj.insert("end", match.capturedEnd(0));
-        objVect.append(obj);
+        */
+        matchVect.append(match);
     }
-    return objVect;
+    return matchVect;
 }
 
 int SeekerTokenizer::operatorsNumberChecker(const QString &baseString)
