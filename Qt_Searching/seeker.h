@@ -20,12 +20,6 @@ public:
 
     ~Seeker();
     /**
-     * @brief setTokens
-     * @param reg
-     * \note set the regular expression to the token class
-     */
-    void setTokens(const QRegularExpression &reg);
-    /**
      * @brief setQuery
      * @param query
      * @return boolean
@@ -35,7 +29,7 @@ public:
     /**
      * @brief search launches the parser search
      */
-    void search();
+    bool search(const QString &query);
 
 private:
 

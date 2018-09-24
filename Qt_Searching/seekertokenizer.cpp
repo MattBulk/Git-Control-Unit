@@ -6,10 +6,10 @@
 #include <QObject>
 #include <QVector>
 
-SeekerTokenizer::SeekerTokenizer(const QRegularExpression &pattern)
+SeekerTokenizer::SeekerTokenizer()
 {
-    this->_pattern = pattern;
-    //this->_pattern = QRegularExpression("((==|\\!=|<[>=]?|>=?|\\|\\||\\&\\&))");
+    this->_pattern = QRegularExpression("((==|\\!=|<[>=]?|>=?|\\|\\||\\&\\&))");
+    this->_parenthesisPat = QRegularExpression("(\\(([^()]|(?R))*\\))");
 }
 
 SeekerTokenizer::~SeekerTokenizer()
@@ -119,7 +119,9 @@ bool SeekerTokenizer::multiOperatorChecker(QString baseString)
     baseString = baseString.replace(QRegularExpression("(\\(|\\))"), "");
     QString wrongOperators = baseString;
     wrongOperators = wrongOperators.replace(this->_pattern, "");
-    if(wrongOperators.contains(QRegularExpression("\\!=|\\!|\\&&|\\&|\\==|\\=")))
+    if(wrongOperators.contains(QRegularExpression("\\!|\\&|\\=")))
+        return false;
+    else if(wrongOperators.contains('|'))
         return false;
     QRegularExpressionMatchIterator i = this->_pattern.globalMatch(baseString);
     QRegularExpressionMatch match, nextMatch;

@@ -3,20 +3,15 @@
 
 Seeker::Seeker()
 {
-
+    this->_theTokenizer = new SeekerTokenizer();
+    this->_theParser = new SeekerParser(this->_theTokenizer);
+    this->_theTokenizer->init();
 }
 
 Seeker::~Seeker()
 {
     qDebug("Seeker::~Seeker");
     delete this->_theParser;
-}
-
-void Seeker::setTokens(const QRegularExpression &reg)
-{
-    this->_pattern = reg;
-    this->_theTokenizer = new SeekerTokenizer(this->_pattern);
-    this->_theTokenizer->init();
 }
 
 bool Seeker::setQuery(const QString &query)
@@ -30,8 +25,16 @@ bool Seeker::setQuery(const QString &query)
         return(false);
 }
 
-void Seeker::search()
+bool Seeker::search(const QString &query)
+
 {
-    this->_theParser = new SeekerParser(this->_theTokenizer, this->_query);
-    this->_theParser->queryParsing();
+    this->_query = query.simplified();
+    this->_query.replace(" ", "");
+    if(this->_theTokenizer->parenthesisChecker(query) && this->_theTokenizer->multiOperatorChecker(this->_query)) {
+        this->_theParser->queryParsing(this->_query);
+        return(true);
+    }
+    else {
+        return(false);
+    }
 }

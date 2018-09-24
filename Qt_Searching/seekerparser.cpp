@@ -1,10 +1,9 @@
 #include "seekerparser.h"
 #include <QDebug>
 
-SeekerParser::SeekerParser(SeekerTokenizer *tok, const QString &query)
+SeekerParser::SeekerParser(SeekerTokenizer *tok)
 {
     this->_theTok = tok;
-    this->_query = query;
 }
 
 SeekerParser::~SeekerParser()
@@ -13,8 +12,9 @@ SeekerParser::~SeekerParser()
     delete this->_theTok;
 }
 
-void SeekerParser::queryParsing()
+void SeekerParser::queryParsing(const QString &query)
 {
+    this->_query = query;
     this->_operatorsPriVect.clear();
     QString parenthCont;
     QString currentOper;
@@ -81,7 +81,7 @@ void SeekerParser::parseNakedQuery(QString &query)
                     subStr = query.mid(leftPos, dist);
                     qDebug()<<"subStr >0:"<< subStr;
                 }
-                else qDebug()<<"mistake";
+                else qDebug()<<"not a word";
                 this->parserMultiTokenizer(subStr, currentOpSign, query);
                 this->_operatorsPosVect = this->_theTok->multiOperatorMatcher(query);
                 this->_operatorsPriVect = this->_operatorsPosVect;

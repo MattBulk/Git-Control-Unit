@@ -16,7 +16,7 @@ public:
      * @brief SeekerTokenizer
      * @param pattern
      */
-    explicit SeekerTokenizer(const QRegularExpression &pattern);
+    explicit SeekerTokenizer();
 
     ~SeekerTokenizer();
     /**
@@ -86,7 +86,7 @@ private:
     /**
      * @brief _parenthesisPat may init this const;
      */
-    const QRegularExpression _parenthesisPat = QRegularExpression("(\\(([^()]|(?R))*\\))");
+    QRegularExpression _parenthesisPat;
 
     QMap <QString, OperatorPriority> _operatorMap;
 

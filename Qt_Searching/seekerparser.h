@@ -16,13 +16,13 @@ public:
      * @param tok
      * @param query
      */
-    SeekerParser(SeekerTokenizer *tok, const QString &query);
+    SeekerParser(SeekerTokenizer *tok);
 
     ~SeekerParser();
     /**
      * @brief queryParsing starts the parsing
      */
-    void queryParsing();
+    void queryParsing(const QString &query);
 
 private:
     /**

@@ -30,9 +30,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::on_pushButton_clicked()
 {
     QString str = ui->comboBox->currentText();
-    if(this->_theSeeker.setQuery(str))
-        this->_theSeeker.search();
-    else qDebug("Query is incorrect");
+    if(!this->_theSeeker.search(str))
+        qDebug("Query is incorrect");
 }
 
 void MainWindow::init()
@@ -41,5 +40,4 @@ void MainWindow::init()
     list << "alpha" << "beta" << "gamma" << "epsilon";
     ui->comboBox->addItems(list);
     ui->comboBox->setCurrentText("((this > 32) || (domani != 45)) && ieri < (lui == 43)");
-    this->_theSeeker.setTokens(QRegularExpression("((==|\\!=|<[>=]?|>=?|\\|\\||\\&\\&))"));
 }
